@@ -92,7 +92,7 @@ estimate_cfu(
 )
 ```
 
-`sampling_vol` is always in ml and defaults to 0.1 (100 ul), the usual volume plated on a 100 mm dish. It can be a single number or, as here, a column giving the volume plated for each row. Not every plate in the example used the same volume, so a single number would bias some estimates. The volume must be constant within each group.
+`sampling_vol` is always in ml and defaults to 0.1 (100 ul), which is the standard volume plated on a 100 mm petri dish. It can be a single number or, as here, a column giving the volume plated for each row (e.g. `vol_plated_ml`). Note: The volume must be constant within each group!
 
 Choose the Poisson estimator with `method = "poisson"`, where `N` is now the cutoff:
 
@@ -107,3 +107,7 @@ estimate_cfu(
 )
 ```
 
+## Notes:
+
+- `group` accepts any tidyselect expression, e.g. `group = c(sample_or_strain, growth_media)`, `starts_with("treat")` or `where(is.character)`. Omit it for no grouping.
+- The count and dilution columns default to `count` and `dilution`. Pass `count` and `dilution` a column name from your data if yours differ, e.g. `count = colony_count`.
