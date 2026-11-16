@@ -4,7 +4,7 @@
 \alias{find_poisson_cutoff}
 \title{Poisson cutoff estimator of CFU}
 \usage{
-find_poisson_cutoff(counts, dil, N, V = 1)
+find_poisson_cutoff(counts, dil, N = 300, V = 1)
 }
 \arguments{
 \item{counts}{Numeric vector of colony counts.}
@@ -12,8 +12,9 @@ find_poisson_cutoff(counts, dil, N, V = 1)
 \item{dil}{Numeric vector of dilution factors (e.g. \code{1e-5}), same length as
 \code{counts}.}
 
-\item{N}{Counts greater than or equal to \code{N} are excluded. Use \code{Inf} to
-keep all counts (naive Poisson estimate).}
+\item{N}{Counts greater than or equal to \code{N} are excluded. Defaults to 300,
+the value recommended for 100 mm petri dishes. Use \code{Inf} to keep all counts
+(naive Poisson estimate).}
 
 \item{V}{Sampling volume. The default of 1 returns absolute CFU in the
 amount plated or spotted.}

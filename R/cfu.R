@@ -10,8 +10,9 @@
 #' @param counts Numeric vector of colony counts.
 #' @param dil Numeric vector of dilution factors (e.g. `1e-5`), same length as
 #'   `counts`.
-#' @param N Counts greater than or equal to `N` are excluded. Use `Inf` to
-#'   keep all counts (naive Poisson estimate).
+#' @param N Counts greater than or equal to `N` are excluded. Defaults to 300,
+#'   the value recommended for 100 mm petri dishes. Use `Inf` to keep all counts
+#'   (naive Poisson estimate).
 #' @param V Sampling volume. The default of 1 returns absolute CFU in the
 #'   amount plated or spotted.
 #'
@@ -25,7 +26,7 @@
 #'
 #' # No cutoff: naive Poisson estimate
 #' find_poisson_cutoff(counts, dil, N = Inf)
-find_poisson_cutoff <- function(counts, dil, N, V = 1) {
+find_poisson_cutoff <- function(counts, dil, N = 300, V = 1) {
   check_counts_dil(counts, dil)
   mask <- !is.na(counts) & !is.na(dil) & counts < N
   total <- sum(counts[mask])
@@ -50,8 +51,8 @@ find_poisson_cutoff <- function(counts, dil, N, V = 1) {
 #'
 #' @inheritParams find_poisson_cutoff
 #' @param N Estimated maximum number of countable colonies, e.g. the area of
-#'   the plate or spot divided by the average colony size. About 100 for a 2 ul
-#'   spot, about 5000 for a 100 mm petri dish.
+#'   the plate or spot divided by the average colony size. Defaults to 5000, the
+#'   value recommended for 100 mm petri dishes (about 100 for a 2 ul spot).
 #'
 #' @return A one-row data frame with columns `r`, `stderr` and `type`. If any
 #'   count exceeds `N` the estimate is `Inf`. If all counts are zero the
@@ -59,7 +60,7 @@ find_poisson_cutoff <- function(counts, dil, N, V = 1) {
 #' @export
 #' @examples
 #' find_mle(c(2, 4, 3, 25, 32), c(1e-6, 1e-6, 1e-6, 1e-5, 1e-5), N = 100)
-find_mle <- function(counts, dil, N, V = 1) {
+find_mle <- function(counts, dil, N = 5000, V = 1) {
   check_counts_dil(counts, dil)
   keep <- !is.na(counts) & !is.na(dil)
   counts <- counts[keep]
@@ -91,8 +92,9 @@ find_mle <- function(counts, dil, N, V = 1) {
 #' group of a data frame of colony counts and converts the result to CFU/ml.
 #'
 #' Absolute CFU in the amount plated or spotted is divided by `sampling_vol`,
-#' which is always in milliliters, so `CFU_ml` is in CFU/ml (e.g. use 0.002 for
-#' a 2 ul spot). The same volume must be used for all dilutions.
+#' which is always in milliliters, so `CFU_ml` is in CFU/ml. The default of 0.1
+#' (100 ul) is the usual volume plated on a 100 mm petri dish (use 0.002 for a
+#' 2 ul spot). The same volume must be used for all dilutions.
 #'
 #' @param data A data frame with one row per counted spot or plate. Input data
 #'   is expected to have a header row, e.g. as read by [utils::read.csv()] or
@@ -109,14 +111,15 @@ find_mle <- function(counts, dil, N, V = 1) {
 #' @param method Estimator to use: `"mle"` for [find_mle()] (default) or
 #'   `"poisson"` for [find_poisson_cutoff()].
 #' @param N Threshold passed to the chosen estimator. For `"mle"`, the maximum
-#'   number of countable colonies (see [find_mle()]); defaults to 100, suitable
-#'   for a 2 ul spot. For `"poisson"`, counts at or above `N` are excluded
-#'   (see [find_poisson_cutoff()]); defaults to 50, suitable for a 2 ul spot.
+#'   number of countable colonies (see [find_mle()]); defaults to 5000, as
+#'   recommended for 100 mm petri dishes. For `"poisson"`, counts at or above
+#'   `N` are excluded (see [find_poisson_cutoff()]); defaults to 300, also as
+#'   recommended for 100 mm petri dishes.
 #' @param sampling_vol Volume plated or spotted, in milliliters (ml), used to
 #'   convert absolute CFU to CFU/ml. Either a single positive number applied to
-#'   all rows (e.g. `0.002`), or the name of a column holding the volume for
-#'   each row (e.g. `vol_plated_ml`). The volume must be constant within each
-#'   group.
+#'   all rows (e.g. `0.002` for a 2 ul spot), or the name of a column holding the volume for
+#'   each row (e.g. `vol_plated_ml`). Defaults to 0.1 (100 ul). The volume must
+#'   be constant within each group.
 #'
 #' @return A data frame with one row per group: the grouping columns,
 #'   `estimator` (the estimator used), `CFU_ml` (CFU/ml) and `CFU_ml_stderr`
@@ -151,7 +154,7 @@ estimate_cfu <- function(
   group = NULL,
   method = c("mle", "poisson"),
   N = NULL,
-  sampling_vol = 0.002
+  sampling_vol = 0.1
 ) {
   stopifnot(is.data.frame(data))
   count <- select_one(rlang::enquo(count), data, "count")
@@ -159,7 +162,7 @@ estimate_cfu <- function(
   group <- names(tidyselect::eval_select(rlang::enquo(group), data))
   method <- match.arg(method)
   if (is.null(N)) {
-    N <- switch(method, mle = 100, poisson = 50)
+    N <- switch(method, mle = 5000, poisson = 300)
   }
   estimator <- switch(method, mle = find_mle, poisson = find_poisson_cutoff)
   vol <- resolve_volume(rlang::enquo(sampling_vol), data)

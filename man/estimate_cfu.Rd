@@ -11,7 +11,7 @@ estimate_cfu(
   group = NULL,
   method = c("mle", "poisson"),
   N = NULL,
-  sampling_vol = 0.002
+  sampling_vol = 0.1
 )
 }
 \arguments{
@@ -33,15 +33,16 @@ Leave as \code{NULL} for no grouping. Strings such as \code{"strain"} also work.
 \code{"poisson"} for \code{\link[=find_poisson_cutoff]{find_poisson_cutoff()}}.}
 
 \item{N}{Threshold passed to the chosen estimator. For \code{"mle"}, the maximum
-number of countable colonies (see \code{\link[=find_mle]{find_mle()}}); defaults to 100, suitable
-for a 2 ul spot. For \code{"poisson"}, counts at or above \code{N} are excluded
-(see \code{\link[=find_poisson_cutoff]{find_poisson_cutoff()}}); defaults to 50, suitable for a 2 ul spot.}
+number of countable colonies (see \code{\link[=find_mle]{find_mle()}}); defaults to 5000, as
+recommended for 100 mm petri dishes. For \code{"poisson"}, counts at or above
+\code{N} are excluded (see \code{\link[=find_poisson_cutoff]{find_poisson_cutoff()}}); defaults to 300, also as
+recommended for 100 mm petri dishes.}
 
 \item{sampling_vol}{Volume plated or spotted, in milliliters (ml), used to
 convert absolute CFU to CFU/ml. Either a single positive number applied to
-all rows (e.g. \code{0.002}), or the name of a column holding the volume for
-each row (e.g. \code{vol_plated_ml}). The volume must be constant within each
-group.}
+all rows (e.g. \code{0.002} for a 2 ul spot), or the name of a column holding the volume for
+each row (e.g. \code{vol_plated_ml}). Defaults to 0.1 (100 ul). The volume must
+be constant within each group.}
 }
 \value{
 A data frame with one row per group: the grouping columns,
@@ -54,8 +55,9 @@ group of a data frame of colony counts and converts the result to CFU/ml.
 }
 \details{
 Absolute CFU in the amount plated or spotted is divided by \code{sampling_vol},
-which is always in milliliters, so \code{CFU_ml} is in CFU/ml (e.g. use 0.002 for
-a 2 ul spot). The same volume must be used for all dilutions.
+which is always in milliliters, so \code{CFU_ml} is in CFU/ml. The default of 0.1
+(100 ul) is the usual volume plated on a 100 mm petri dish (use 0.002 for a
+2 ul spot). The same volume must be used for all dilutions.
 }
 \examples{
 path <- system.file("extdata", "cfu_example.tsv", package = "CFUestimatoR")

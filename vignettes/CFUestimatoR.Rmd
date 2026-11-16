@@ -20,20 +20,20 @@ library(CFUestimatoR)
 
 ## Overview
 
-CFUestimatoR estimates colony forming units (CFU) from colony counts across a dilution series, using the maximum likelihood estimators from Martini et al. (2024). It offers two estimators:
+`CFUestimatoR` estimates colony forming units (CFU) from colony counts across a dilution series, using the maximum likelihood estimators from Martini et al. (2024). Please cite this paper if you use `CFUestimatoR`.
+
+<div style="border-left: 4px solid #0d6efd; background-color: #f1f6ff; padding: 0.5em 1em; margin: 1em 0;">
+Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood estimators for colony-forming units. *Microbiology Spectrum* 12(9):e03946-23. <https://doi.org/10.1128/spectrum.03946-23>
+</div>
+
+`CFUestimatoR` offers two estimators:
 
 - `"mle"` (default): a maximum likelihood estimator that accounts for saturation of a spot or plate at roughly `N` countable colonies.
 - `"poisson"`: a Poisson estimator that pools all observations with counts below the cutoff `N`.
 
-<div style="border-left: 4px solid #0d6efd; background-color: #f1f6ff; padding: 0.5em 1em; margin: 1em 0;">
-**Citation**
-
-Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood estimators for colony-forming units. *Microbiology Spectrum* 12(9):e03946-23. <https://doi.org/10.1128/spectrum.03946-23>
-</div>
-
 ## A single dilution series
 
-The estimators work directly on vectors of counts and dilutions. Here are three replicates at each of three dilutions. Setting `V = 1` returns CFU in the volume plated.
+The estimators work directly on vectors of counts and dilutions. Here are three replicates at each of three dilutions. Setting `V = 1` returns CFU in the volume plated (i.e., no back calculation to concentration in the original sample).
 
 ```{r single}
 dilution <- rep(c(1e-7, 1e-6, 1e-5), each = 3)
@@ -48,13 +48,34 @@ The Poisson estimator discards counts at or above `N`, which protects against cr
 find_poisson_cutoff(count, dilution, N = 300, V = 1)
 ```
 
-Setting `N = Inf` excludes nothing and gives the naive Poisson estimate, which pools every count including the crowded ones:
+Setting `N = Inf` includes all observations (even those with very high colony counts) and gives the naive Poisson estimate from the paper.
 
 ```{r naive}
 find_poisson_cutoff(count, dilution, N = Inf, V = 1)
 ```
 
-The naive estimate is lower than the cutoff estimate because colonies on crowded plates are undercounted. The maximum likelihood estimator uses all the data and models the saturation, so it needs no cutoff but does need a sensible `N`.
+The naive estimate is lower than the cutoff estimate because colonies on crowded plates are undercounted. The maximum likelihood estimator uses all the data and models the saturation, so it needs no cutoff but it does need a sensible `N`.
+
+### Choosing N
+
+`N` means different things for the two different estimators.
+
+| Method | Meaning of `N` | Default |
+|---|---|---|
+| `"mle"` | Maximum countable colonies | 5000 |
+| `"poisson"` | Counts at or above `N` are excluded | 300 |
+
+- The cutoff number in the Poisson approach should be a number less than when crowding starts to be important on the plate. 
+- For `"mle"`, a good starting estimate is the ratio of the area of the plate to the average colony size. Any count above `N` gives an estimate of `Inf`. 
+
+
+
+For example, sometimes you may use a drop-spotting approach (e.g., [Miles and Misra](https://en.wikipedia.org/wiki/Miles_and_Misra_method)) and then values of 100 are useful for a 2 μl spot.
+
+
+5000 for a 100 mm dish.
+
+
 
 ## Many samples at once
 
@@ -78,7 +99,7 @@ estimate_cfu(
 )
 ```
 
-`sampling_vol` is always in ml. It can be a single number or, as here, a column giving the volume plated for each row. Not every plate in the example used the same volume, so a single number would bias some estimates. The volume must be constant within each group.
+`sampling_vol` is always in ml and defaults to 0.1 (100 ul), the usual volume plated on a 100 mm dish. It can be a single number or, as here, a column giving the volume plated for each row. Not every plate in the example used the same volume, so a single number would bias some estimates. The volume must be constant within each group.
 
 Choose the Poisson estimator with `method = "poisson"`, where `N` is now the cutoff:
 
@@ -93,13 +114,3 @@ estimate_cfu(
 )
 ```
 
-## Choosing N
-
-`N` means different things for the two estimators.
-
-| Method | Meaning of `N` | Default |
-|---|---|---|
-| `"mle"` | Maximum countable colonies | 100 |
-| `"poisson"` | Counts at or above `N` are excluded | 50 |
-
-For `"mle"`, any count above `N` gives an estimate of `Inf`, so set `N` to suit your assay: about 100 for a 2 ul spot and about 5000 for a 100 mm dish.

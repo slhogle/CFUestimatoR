@@ -4,7 +4,7 @@
 \alias{find_mle}
 \title{Maximum likelihood estimator of CFU}
 \usage{
-find_mle(counts, dil, N, V = 1)
+find_mle(counts, dil, N = 5000, V = 1)
 }
 \arguments{
 \item{counts}{Numeric vector of colony counts.}
@@ -13,8 +13,8 @@ find_mle(counts, dil, N, V = 1)
 \code{counts}.}
 
 \item{N}{Estimated maximum number of countable colonies, e.g. the area of
-the plate or spot divided by the average colony size. About 100 for a 2 ul
-spot, about 5000 for a 100 mm petri dish.}
+the plate or spot divided by the average colony size. Defaults to 5000, the
+value recommended for 100 mm petri dishes (about 100 for a 2 ul spot).}
 
 \item{V}{Sampling volume. The default of 1 returns absolute CFU in the
 amount plated or spotted.}

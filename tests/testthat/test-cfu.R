@@ -160,9 +160,23 @@ test_that("estimate_cfu returns Inf when counts exceed N", {
     cfu,
     count = colony_count,
     group = sample_or_strain,
+    N = 100,
     sampling_vol = vol_plated_ml
   )
   expect_equal(unique(res$CFU_ml), Inf)
+})
+
+test_that("defaults are N = 5000 (mle), N = 300 (poisson), 0.1 ml", {
+  d <- data.frame(
+    count = c(5, 8, 4, 62, 77, 51),
+    dilution = rep(c(1e-7, 1e-6), each = 3)
+  )
+  mle <- find_mle(d$count, d$dilution, N = 5000)
+  pois <- find_poisson_cutoff(d$count, d$dilution, N = 300)
+  expect_equal(find_mle(d$count, d$dilution), mle)
+  expect_equal(find_poisson_cutoff(d$count, d$dilution), pois)
+  expect_equal(estimate_cfu(d)$CFU_ml, mle$r / 0.1)
+  expect_equal(estimate_cfu(d, method = "poisson")$CFU_ml, pois$r / 0.1)
 })
 
 test_that("estimate_cfu group accepts tidyselect expressions", {
@@ -191,7 +205,7 @@ test_that("estimate_cfu accepts bare or string count and dilution columns", {
     estimate_cfu(d, count = "n", dilution = "d", sampling_vol = 1),
     res
   )
-  expect_equal(res$CFU_ml, find_mle(d$n, d$d, N = 100)$r)
+  expect_equal(res$CFU_ml, find_mle(d$n, d$d, N = 5000)$r)
 })
 
 test_that("estimate_cfu works with tibbles", {
@@ -203,7 +217,7 @@ test_that("estimate_cfu works without grouping", {
   d <- data.frame(n = c(2, 4, 3), d = 1e-6)
   res <- estimate_cfu(d, count = n, dilution = d, sampling_vol = 1)
   expect_equal(nrow(res), 1)
-  expect_equal(res$CFU_ml, find_mle(d$n, d$d, N = 100)$r)
+  expect_equal(res$CFU_ml, find_mle(d$n, d$d, N = 5000)$r)
 })
 
 test_that("estimate_cfu validates arguments", {
