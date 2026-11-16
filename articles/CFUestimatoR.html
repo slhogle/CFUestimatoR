@@ -207,10 +207,10 @@ data frame. The bundled example data has one row per plate.</p>
 <span><span class="co">#&gt; 6 3179163302     121933373</span></span>
 <span><span class="co">#&gt; 7 3891949271     135366618</span></span></code></pre></div>
 <p><code>sampling_vol</code> is always in ml and defaults to 0.1 (100
-ul), the usual volume plated on a 100 mm dish. It can be a single number
-or, as here, a column giving the volume plated for each row. Not every
-plate in the example used the same volume, so a single number would bias
-some estimates. The volume must be constant within each group.</p>
+ul), which is the standard volume plated on a 100 mm petri dish. It can
+be a single number or, as here, a column giving the volume plated for
+each row (e.g. <code>vol_plated_ml</code>). Note: The volume must be
+constant within each group!</p>
 <p>Choose the Poisson estimator with <code>method = "poisson"</code>,
 where <code>N</code> is now the cutoff:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -230,6 +230,21 @@ where <code>N</code> is now the cutoff:</p>
 <span><span class="co">#&gt; 5               E1      PPY+Str poisson_cutoff  359090909      40400884</span></span>
 <span><span class="co">#&gt; 6               E2          PPY poisson_cutoff 2113636364      98017539</span></span>
 <span><span class="co">#&gt; 7               E2      PPY+Str poisson_cutoff  586363636      51626440</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="notes">Notes:<a class="anchor" aria-label="anchor" href="#notes"></a>
+</h2>
+<ul>
+<li>
+<code>group</code> accepts any tidyselect expression,
+e.g. <code>group = c(sample_or_strain, growth_media)</code>,
+<code>starts_with("treat")</code> or <code>where(is.character)</code>.
+Omit it for no grouping.</li>
+<li>The count and dilution columns default to <code>count</code> and
+<code>dilution</code>. Pass <code>count</code> and <code>dilution</code>
+a column name from your data if yours differ,
+e.g. <code>count = colony_count</code>.</li>
+</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

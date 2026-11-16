@@ -50,7 +50,7 @@
 </h1></div>
 <p><code>CFUestimatoR</code> is a package for implementing the Maximum Likelihood and Poisson estimators from:</p>
 <p>Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood estimators for colony-forming units. <em>Microbiology Spectrum</em> 12(9):e03946-23. <a href="https://doi.org/10.1128/spectrum.03946-23" class="external-link uri">https://doi.org/10.1128/spectrum.03946-23</a></p>
-<p>Make sure to cite this paper if you use CFUestimatoR.</p>
+<p>Please make sure to cite this paper if you use <code>CFUestimatoR</code>!</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -58,70 +58,6 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"slhogle/CFUestimatoR"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="estimating-colony-forming-units">Estimating colony forming units<a class="anchor" aria-label="anchor" href="#estimating-colony-forming-units"></a>
-</h2>
-<p><code><a href="reference/estimate_cfu.html">estimate_cfu()</a></code> estimates CFU/ml from a dilution series of colony counts. Input data must have a header row, with one row per counted spot or plate. The bundled example, <code>cfu_example.tsv</code>, has columns for the sample, media, <code>dilution</code>, <code>vol_plated_ml</code> and <code>colony_count</code>. Replicates are pooled by leaving <code>replicate</code> out of <code>group</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://slhogle.github.io/CFUestimatoR/">CFUestimatoR</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"cfu_example.tsv"</span>, package <span class="op">=</span> <span class="st">"CFUestimatoR"</span><span class="op">)</span></span>
-<span><span class="va">cfu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.delim</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Maximum likelihood estimator (default), using the plated volume in each row</span></span>
-<span><span class="fu"><a href="reference/estimate_cfu.html">estimate_cfu</a></span><span class="op">(</span></span>
-<span>  <span class="va">cfu</span>,</span>
-<span>  count <span class="op">=</span> <span class="va">colony_count</span>,</span>
-<span>  group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">measurement</span>, <span class="va">time_hours</span>, <span class="va">growth_media</span>, <span class="va">sample_or_strain</span><span class="op">)</span>,</span>
-<span>  N <span class="op">=</span> <span class="fl">5000</span>,</span>
-<span>  sampling_vol <span class="op">=</span> <span class="va">vol_plated_ml</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">#&gt;               measurement time_hours growth_media sample_or_strain    estimator</span></span>
-<span><span class="co">#&gt; 1          direct plating         48          PPY               E1 ML_estimator</span></span>
-<span><span class="co">#&gt; 2          direct plating         48          PPY               E2 ML_estimator</span></span>
-<span><span class="co">#&gt; 3          direct plating         48      PPY+Str               E1 ML_estimator</span></span>
-<span><span class="co">#&gt; 4          direct plating         48      PPY+Str               E2 ML_estimator</span></span>
-<span><span class="co">#&gt; 5 SGT calibration plating         48      PPY+Str          control ML_estimator</span></span>
-<span><span class="co">#&gt; 6  starting-density check          0          PPY            1977A ML_estimator</span></span>
-<span><span class="co">#&gt; 7  starting-density check          0      PPY+Str            1977E ML_estimator</span></span>
-<span><span class="co">#&gt;       CFU_ml CFU_ml_stderr</span></span>
-<span><span class="co">#&gt; 1 1469416498      82274187</span></span>
-<span><span class="co">#&gt; 2 2154889790      99937499</span></span>
-<span><span class="co">#&gt; 3  360327325      40540075</span></span>
-<span><span class="co">#&gt; 4  589537227      51906132</span></span>
-<span><span class="co">#&gt; 5 2117968546     110561892</span></span>
-<span><span class="co">#&gt; 6 3179163302     121933373</span></span>
-<span><span class="co">#&gt; 7 3891949271     135366618</span></span>
-<span></span>
-<span><span class="co"># Poisson cutoff estimator</span></span>
-<span><span class="fu"><a href="reference/estimate_cfu.html">estimate_cfu</a></span><span class="op">(</span></span>
-<span>  <span class="va">cfu</span>,</span>
-<span>  count <span class="op">=</span> <span class="va">colony_count</span>,</span>
-<span>  group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">sample_or_strain</span>, <span class="va">growth_media</span><span class="op">)</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"poisson"</span>,</span>
-<span>  N <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>  sampling_vol <span class="op">=</span> <span class="va">vol_plated_ml</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;   sample_or_strain growth_media      estimator     CFU_ml CFU_ml_stderr</span></span>
-<span><span class="co">#&gt; 1            1977A          PPY poisson_cutoff 3090909091     118530953</span></span>
-<span><span class="co">#&gt; 2            1977E      PPY+Str poisson_cutoff 3759090909     130716399</span></span>
-<span><span class="co">#&gt; 3          control      PPY+Str poisson_cutoff 2085227273     108847978</span></span>
-<span><span class="co">#&gt; 4               E1          PPY poisson_cutoff 1450000000      81184414</span></span>
-<span><span class="co">#&gt; 5               E1      PPY+Str poisson_cutoff  359090909      40400884</span></span>
-<span><span class="co">#&gt; 6               E2          PPY poisson_cutoff 2113636364      98017539</span></span>
-<span><span class="co">#&gt; 7               E2      PPY+Str poisson_cutoff  586363636      51626440</span></span></code></pre></div>
-<p>Notes:</p>
-<ul>
-<li>
-<code>sampling_vol</code> is always in milliliters. Defaults to 0.1 (100 ul), the usual volume plated on a 100 mm dish. Give either a single number (e.g. <code>0.002</code> for a 2 ul spot) or a column holding the volume for each row (e.g. <code>vol_plated_ml</code>). The volume must be the same for all dilutions within a group.</li>
-<li>
-<code>N</code> is the estimator threshold. For <code>"mle"</code> it is the maximum countable colonies (default 5000, recommended for a 100 mm dish; about 50 for a 2 ul spot). Counts above <code>N</code> give an estimate of <code>Inf</code> for <code>"mle"</code>, so set <code>N</code> to suit your assay. For <code>"poisson"</code> counts at or above <code>N</code> are excluded (default 300, recommended for a 100 mm dish). Use <code>N = Inf</code> to exclude nothing, which gives the naive Poisson estimate.</li>
-<li>
-<code>group</code> accepts any tidyselect expression, e.g. <code>group = c(sample_or_strain, growth_media)</code>, <code>starts_with("treat")</code> or <code>where(is.character)</code>. Omit it for no grouping.</li>
-<li>The count and dilution columns default to <code>count</code> and <code>dilution</code>. Pass <code>count</code> and <code>dilution</code> a column name from your data if yours differ, e.g. <code>count = colony_count</code>.</li>
-</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
