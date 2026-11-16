@@ -5,7 +5,7 @@ Authors@R:
     person("Shane L", "Hogle", , "shane.hogle@abo.fi", role = c("aut", "cre"))
 Description: Simple R functions to implement maximum likelihood estimators
     from <https://doi.org/10.1128/spectrum.03946-23>.
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports: 
@@ -20,3 +20,4 @@ Suggests:
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.1
 VignetteBuilder: knitr
+URL: https://slhogle.github.io/CFUestimatoR/

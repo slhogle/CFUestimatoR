@@ -8,6 +8,13 @@
 \description{
 Simple R functions to implement maximum likelihood estimators from \url{https://doi.org/10.1128/spectrum.03946-23}.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://slhogle.github.io/CFUestimatoR/}
+}
+
+}
 \author{
 \strong{Maintainer}: Shane L Hogle \email{shane.hogle@abo.fi}
 

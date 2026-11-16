@@ -1,14 +1,17 @@
 # CFUestimatoR
 
-Functions and styles commonly used in the Hogle lab.
+`CFUestimatoR` is a package for implementing the Maximum Likelihood and Poisson estimators from:
+
+Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood estimators for colony-forming units. *Microbiology Spectrum* 12(9):e03946-23. <https://doi.org/10.1128/spectrum.03946-23>
+
+Make sure to cite this paper if you use CFUestimatoR. 
 
 ## Installation
-
-From the package directory:
+You can install the development version from GitHub with:
 
 ``` r
-# install.packages("devtools")
-devtools::install()
+# install.packages("pak")
+pak::pkg_install("slhogle/CFUestimatoR")
 ```
 
 ## Estimating colony forming units
@@ -29,6 +32,7 @@ estimate_cfu(
   N = 5000,
   sampling_vol = vol_plated_ml
 )
+
 #>               measurement time_hours growth_media sample_or_strain    estimator
 #> 1          direct plating         48          PPY               E1 ML_estimator
 #> 2          direct plating         48          PPY               E2 ML_estimator
