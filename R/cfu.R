@@ -52,7 +52,7 @@ find_poisson_cutoff <- function(counts, dil, N = 300, V = 1) {
 #' @inheritParams find_poisson_cutoff
 #' @param N Estimated maximum number of countable colonies, e.g. the area of
 #'   the plate or spot divided by the average colony size. Defaults to 5000, the
-#'   value recommended for 100 mm petri dishes (about 100 for a 2 ul spot).
+#'   value recommended for 100 mm petri dishes (about 50 for a 2 ul spot).
 #'
 #' @return A one-row data frame with columns `r`, `stderr` and `type`. If any
 #'   count exceeds `N` the estimate is `Inf`. If all counts are zero the

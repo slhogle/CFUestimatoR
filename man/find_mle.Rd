@@ -14,7 +14,7 @@ find_mle(counts, dil, N = 5000, V = 1)
 
 \item{N}{Estimated maximum number of countable colonies, e.g. the area of
 the plate or spot divided by the average colony size. Defaults to 5000, the
-value recommended for 100 mm petri dishes (about 100 for a 2 ul spot).}
+value recommended for 100 mm petri dishes (about 50 for a 2 ul spot).}
 
 \item{V}{Sampling volume. The default of 1 returns absolute CFU in the
 amount plated or spotted.}

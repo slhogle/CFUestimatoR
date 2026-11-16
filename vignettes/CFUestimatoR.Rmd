@@ -68,7 +68,7 @@ The naive estimate is lower than the cutoff estimate because colonies on crowded
 - The cutoff number in the Poisson approach should be a number less than when crowding starts to be important on the plate. 
 - For `"mle"`, a good starting estimate is the ratio of the area of the plate to the average colony size. Any count above `N` gives an estimate of `Inf`. 
 
-*Note:* sometimes you may use a drop-spotting approach (e.g., [Miles and Misra](https://en.wikipedia.org/wiki/Miles_and_Misra_method)) if you have minaturized your assay. For example if you've plated a 2 μl spot  then values around 50 or slightly higher are good. In general, the drop spotting approach will usually produce noisier data. 
+*Note:* sometimes you may use a drop-spotting approach (e.g., [Miles and Misra](https://en.wikipedia.org/wiki/Miles_and_Misra_method)) if you have miniaturized your assay. For example if you've plated a 2 μl spot then a value of 50 is a good choice. In general, the drop spotting approach will usually produce noisier data. 
 
 ## Many samples at once
 
@@ -92,7 +92,7 @@ estimate_cfu(
 )
 ```
 
-`sampling_vol` is always in ml. It can be a single number or, as here, a column giving the volume plated for each row. Not every plate in the example used the same volume, so a single number would bias some estimates. The volume must be constant within each group.
+`sampling_vol` is always in ml and defaults to 0.1 (100 ul), the usual volume plated on a 100 mm dish. It can be a single number or, as here, a column giving the volume plated for each row. Not every plate in the example used the same volume, so a single number would bias some estimates. The volume must be constant within each group.
 
 Choose the Poisson estimator with `method = "poisson"`, where `N` is now the cutoff:
 
