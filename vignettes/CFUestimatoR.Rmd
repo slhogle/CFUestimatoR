@@ -20,10 +20,16 @@ library(CFUestimatoR)
 
 ## Overview
 
-CFUestimatoR estimates colony forming units (CFU) from colony counts across a dilution series, using the maximum likelihood estimators from <https://doi.org/10.1128/spectrum.03946-23>. It offers two estimators:
+CFUestimatoR estimates colony forming units (CFU) from colony counts across a dilution series, using the maximum likelihood estimators from Martini et al. (2024). It offers two estimators:
 
 - `"mle"` (default): a maximum likelihood estimator that accounts for saturation of a spot or plate at roughly `N` countable colonies.
 - `"poisson"`: a Poisson estimator that pools all observations with counts below the cutoff `N`.
+
+<div style="border-left: 4px solid #0d6efd; background-color: #f1f6ff; padding: 0.5em 1em; margin: 1em 0;">
+**Citation**
+
+Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood estimators for colony-forming units. *Microbiology Spectrum* 12(9):e03946-23. <https://doi.org/10.1128/spectrum.03946-23>
+</div>
 
 ## A single dilution series
 
