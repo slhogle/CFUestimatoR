@@ -1,0 +1,99 @@
+---
+title: "Getting started with CFUestimatoR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with CFUestimatoR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(CFUestimatoR)
+```
+
+## Overview
+
+CFUestimatoR estimates colony forming units (CFU) from colony counts across a dilution series, using the maximum likelihood estimators from <https://doi.org/10.1128/spectrum.03946-23>. It offers two estimators:
+
+- `"mle"` (default): a maximum likelihood estimator that accounts for saturation of a spot or plate at roughly `N` countable colonies.
+- `"poisson"`: a Poisson estimator that pools all observations with counts below the cutoff `N`.
+
+## A single dilution series
+
+The estimators work directly on vectors of counts and dilutions. Here are three replicates at each of three dilutions. Setting `V = 1` returns CFU in the volume plated.
+
+```{r single}
+dilution <- rep(c(1e-7, 1e-6, 1e-5), each = 3)
+count <- c(5, 8, 4, 62, 77, 51, 456, 597, 356)
+
+find_mle(count, dilution, N = 5000, V = 1)
+```
+
+The Poisson estimator discards counts at or above `N`, which protects against crowded plates. Here the three plates at the 1e-5 dilution (counts of 356 to 597) are excluded, so only the six plates at 1e-7 and 1e-6 are used.
+
+```{r poisson}
+find_poisson_cutoff(count, dilution, N = 300, V = 1)
+```
+
+Setting `N = Inf` excludes nothing and gives the naive Poisson estimate, which pools every count including the crowded ones:
+
+```{r naive}
+find_poisson_cutoff(count, dilution, N = Inf, V = 1)
+```
+
+The naive estimate is lower than the cutoff estimate because colonies on crowded plates are undercounted. The maximum likelihood estimator uses all the data and models the saturation, so it needs no cutoff but does need a sensible `N`.
+
+## Many samples at once
+
+`estimate_cfu()` applies one estimator to every group in a data frame. The bundled example data has one row per plate.
+
+```{r data}
+path <- system.file("extdata", "cfu_example.tsv", package = "CFUestimatoR")
+cfu <- read.delim(path)
+head(cfu)
+```
+
+Name the count column with `count` (the dilution column is `dilution` here, which is the default). Use `group` to say which columns define a sample. Leaving `replicate` out of `group` pools replicates.
+
+```{r estimate}
+estimate_cfu(
+  cfu,
+  count = colony_count,
+  group = c(measurement, time_hours, growth_media, sample_or_strain),
+  N = 5000,
+  sampling_vol = vol_plated_ml
+)
+```
+
+`sampling_vol` is always in ml. It can be a single number or, as here, a column giving the volume plated for each row. Not every plate in the example used the same volume, so a single number would bias some estimates. The volume must be constant within each group.
+
+Choose the Poisson estimator with `method = "poisson"`, where `N` is now the cutoff:
+
+```{r poisson-groups}
+estimate_cfu(
+  cfu,
+  count = colony_count,
+  group = c(sample_or_strain, growth_media),
+  method = "poisson",
+  N = 500,
+  sampling_vol = vol_plated_ml
+)
+```
+
+## Choosing N
+
+`N` means different things for the two estimators.
+
+| Method | Meaning of `N` | Default |
+|---|---|---|
+| `"mle"` | Maximum countable colonies | 100 |
+| `"poisson"` | Counts at or above `N` are excluded | 50 |
+
+For `"mle"`, any count above `N` gives an estimate of `Inf`, so set `N` to suit your assay: about 100 for a 2 ul spot and about 5000 for a 100 mm dish.
