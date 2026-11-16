@@ -1,0 +1,29 @@
+measurement	time_hours	growth_media	sample_or_strain	replicate	dilution	vol_plated_ml	colony_count
+starting-density check	0	PPY	1977A	a	1e-6	0.1	337
+starting-density check	0	PPY	1977A	b	1e-6	0.1	259
+starting-density check	0	PPY	1977A	a	1e-7	0.1	40
+starting-density check	0	PPY	1977A	b	1e-7	0.1	44
+starting-density check	0	PPY+Str	1977E	a	1e-6	0.1	341
+starting-density check	0	PPY+Str	1977E	b	1e-6	0.1	391
+starting-density check	0	PPY+Str	1977E	a	1e-7	0.1	50
+starting-density check	0	PPY+Str	1977E	b	1e-7	0.1	45
+SGT calibration plating	48	PPY+Str	control	a	1e-6	0.08	86
+SGT calibration plating	48	PPY+Str	control	b	1e-6	0.08	249
+SGT calibration plating	48	PPY+Str	control	a	1e-7	0.08	9
+SGT calibration plating	48	PPY+Str	control	b	1e-7	0.08	23
+direct plating	48	PPY	E1	a	1e-6	0.1	140
+direct plating	48	PPY	E1	b	1e-6	0.1	146
+direct plating	48	PPY	E1	a	1e-7	0.1	16
+direct plating	48	PPY	E1	b	1e-7	0.1	17
+direct plating	48	PPY	E2	a	1e-6	0.1	209
+direct plating	48	PPY	E2	b	1e-6	0.1	204
+direct plating	48	PPY	E2	a	1e-7	0.1	28
+direct plating	48	PPY	E2	b	1e-7	0.1	24
+direct plating	48	PPY+Str	E1	a	1e-6	0.1	39
+direct plating	48	PPY+Str	E1	b	1e-6	0.1	36
+direct plating	48	PPY+Str	E1	a	1e-7	0.1	3
+direct plating	48	PPY+Str	E1	b	1e-7	0.1	1
+direct plating	48	PPY+Str	E2	a	1e-6	0.1	62
+direct plating	48	PPY+Str	E2	b	1e-6	0.1	55
+direct plating	48	PPY+Str	E2	a	1e-7	0.1	7
+direct plating	48	PPY+Str	E2	b	1e-7	0.1	5

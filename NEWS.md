@@ -1,0 +1,4 @@
+# CFUestimatoR 0.0.0.9000
+
+* `estimate_cfu()` estimates colony forming units per ml from a dilution series, per group. Use `method = "mle"` (default) or `method = "poisson"` to choose the estimator, and `sampling_vol` (in ml) to set the plated or spotted volume. `group` accepts any tidyselect expression, such as `c(strain, rep)` or `where(is.character)`. `count` and `dilution` take a single column name from the data (bare or string) and default to columns named `count` and `dilution`. `sampling_vol` can be a single number or the name of a column holding the volume plated for each row, which must be constant within each group. The result column naming the estimator is called `estimator` (not `type`) so it cannot clash with a grouping column called `type`.
+* `find_mle()` and `find_poisson_cutoff()` are exported as the underlying estimators.
