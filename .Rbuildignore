@@ -1,7 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^working_scripts$
-^example_data$
 ^LICENSE\.md$
 ^\.git$
 ^README\.Rmd$
