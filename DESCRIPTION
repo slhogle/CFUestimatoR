@@ -2,7 +2,7 @@ Package: CFUestimatoR
 Title: Estimate Colony Forming Units with Maximum Likelihood
 Version: 0.0.0.9000
 Authors@R: 
-    person("Shane", "Hogle", , "shane@example.com", role = c("aut", "cre"))
+    person("Shane L", "Hogle", , "shane.hogle@abo.fi", role = c("aut", "cre"))
 Description: Simple R functions to implement maximum likelihood estimators
     from <https://doi.org/10.1128/spectrum.03946-23>.
 License: MIT + file LICENSE

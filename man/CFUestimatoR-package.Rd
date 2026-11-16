@@ -9,11 +9,11 @@
 Simple R functions to implement maximum likelihood estimators from \url{https://doi.org/10.1128/spectrum.03946-23}.
 }
 \author{
-\strong{Maintainer}: Shane Hogle \email{shane@example.com}
+\strong{Maintainer}: Shane L Hogle \email{shane.hogle@abo.fi}
 
 Authors:
 \itemize{
-  \item Shane Hogle \email{shane@example.com}
+  \item Shane L Hogle \email{shane.hogle@abo.fi}
 }
 
 }
