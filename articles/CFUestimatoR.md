@@ -38,11 +38,9 @@ is equal to the variance. The most likely estimator under this model is
 just the ratio of the total number of colonies counted across all plates
 divided by the total amount of liquid plated.
 
-\$\$ r\_{\text{mle}} = \frac{\underset{k}{\sum} n\_{k}}{V
-\underset{k}{\sum} d\_{k}} = \frac{\underset{k}{\sum}
-n\_{k}}{\underset{k}{\sum} V\_{k}} , \sigma =
-\frac{r\_{\text{mle}\\\text{nbsp};}}{\\sqrt{\underset{k}{\sum} n\_{k}}}
-\$\$
+\$\$ r\_{\text{mle}} = \frac{{\sum}\_k n\_{k}}{V \sum_k d\_{k}} =
+\frac{\sum_k n\_{k}}{\sum_k V\_{k}}, \space \sigma =
+\frac{r\_{\text{mle}}}{\sqrt{\sum_k n\_{k}}} \$\$
 
 One weakness with this approach is that it cannot account for the event
 where two individual cells land on a small enough area that they grow
@@ -54,10 +52,9 @@ user-defined thresholding value $`M`$, below which it is assumed
 crowding is negligable and does not need to be modeled. This results in
 the following estimator.
 
-\$\$ r\_{\text{mle}\textrm{ }} = \frac{\underset{k}{\sum} I ⁡ n\_{k} \leq
-M ⁢ n\_{k}}{\underset{k}{\sum} I ⁡ n\_{k} \leq M ⁢ V\_{k}} , \sigma =
-\frac{r\_{m ⁢ l ⁢ e}}{\\sqrt{\underset{k}{\sum} I ⁡ n\_{k} \leq M ⁢ n\_{k}}}
-\$\$
+\$\$ r\_{\text{mle}} = \frac{\sum_k I(n\_{k} \leq M) n\_{k}}{\sum_k
+I(n\_{k} \leq M) V\_{k}}, \space \sigma =
+\frac{r\_{\text{mle}}}{\sqrt{\sum_k I (n\_{k} \leq M) n\_{k}}} \$\$
 
 In practive the cutoff number $`N`$ should be set to a number less than
 when crowding starts to be important. This is equivalent to the TNTC
@@ -87,14 +84,14 @@ probability of $`\geq 1`$ landing in region $`N_i`$ is
 $`p_{\gt} = e^{- d_{k} r V / N_i}`$ resulting in the expression
 
 ``` math
-p  n_{k}  =  \binom{N}{n_k} p_{>}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k} r V}{N}} )^{n_{k}} e^{- d_{k} r V  N - n_{k} }
+p  n_{k}  =  \binom{N}{n_k} p_{>}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k}rV}{N}})^{n_{k}} e^{-d_{k}rV(N - n_{k})}
 ```
 
 where the MLE density can be found form solving the following eqation
 for $`r`$
 
 ``` math
-\underset{k}{\sum} \frac{d_{k} n_{k}}{N(1 - e^{- r d_{k} V / N})} = \underset{k}{\sum} d_{k}
+\sum_k \frac{d_{k} n_{k}}{N(1 - e^{-rd_{k} V / N})} = \sum_k d_{k}
 ```
 
 When using this estimator in practice we must choose a value for the

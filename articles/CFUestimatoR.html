@@ -98,10 +98,8 @@ is equal to the variance. The most likely estimator under this model is
 just the ratio of the total number of colonies counted across all plates
 divided by the total amount of liquid plated.</p>
 <p><span class="math display">$$
-r_{\text{mle}} = \frac{\underset{k}{\sum} n_{k}}{V \underset{k}{\sum}
-d_{k}} = \frac{\underset{k}{\sum} n_{k}}{\underset{k}{\sum} V_{k}} ,
-\sigma =
-\frac{r_{\text{mle}\&amp;\text{nbsp};}}{\\sqrt{\underset{k}{\sum}
+r_{\text{mle}} = \frac{{\sum}_k n_{k}}{V \sum_k d_{k}} = \frac{\sum_k
+n_{k}}{\sum_k V_{k}}, \space \sigma = \frac{r_{\text{mle}}}{\sqrt{\sum_k
 n_{k}}}
 $$</span></p>
 <p>One weakness with this approach is that it cannot account for the
@@ -114,9 +112,9 @@ user-defined thresholding value
 below which it is assumed crowding is negligable and does not need to be
 modeled. This results in the following estimator.</p>
 <p><span class="math display">$$
-r_{\text{mle}\textrm{ }} = \frac{\underset{k}{\sum} I ⁡  n_{k} \leq M  ⁢
-n_{k}}{\underset{k}{\sum} I ⁡  n_{k} \leq M  ⁢ V_{k}} , \sigma =
-\frac{r_{m ⁢ l ⁢ e}}{\\sqrt{\underset{k}{\sum} I ⁡  n_{k} \leq M  ⁢ n_{k}}}
+r_{\text{mle}} = \frac{\sum_k I(n_{k} \leq M) n_{k}}{\sum_k I(n_{k} \leq
+M) V_{k}}, \space \sigma = \frac{r_{\text{mle}}}{\sqrt{\sum_k I (n_{k}
+\leq M) n_{k}}}
 $$</span></p>
 <p>In practive the cutoff number
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
@@ -164,14 +162,14 @@ landing in region
 is
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mo>&gt;</mo></msub><mo>=</mo><msup><mi>e</mi><mrow><mi>−</mi><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi><mi>/</mi><msub><mi>N</mi><mi>i</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">p_{\gt} = e^{- d_{k} r V / N_i}</annotation></semantics></math>
 resulting in the expression</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><msub><mi>n</mi><mi>k</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><msub><mi>n</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>p</mi><mo>&gt;</mo><msub><mi>n</mi><mi>k</mi></msub></msubsup><msubsup><mi>p</mi><mn>0</mn><mrow><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>k</mi></msub></mrow></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><msub><mi>n</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mfrac><mrow><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi></mrow><mi>N</mi></mfrac></mrow></msup><msup><mo stretchy="false" form="postfix">)</mo><msub><mi>n</mi><mi>k</mi></msub></msup><msup><mi>e</mi><mrow><mi>−</mi><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>k</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">
-p  n_{k}  =  \binom{N}{n_k} p_{&gt;}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k} r V}{N}} )^{n_{k}} e^{- d_{k} r V  N - n_{k} }
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><msub><mi>n</mi><mi>k</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><msub><mi>n</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>p</mi><mo>&gt;</mo><msub><mi>n</mi><mi>k</mi></msub></msubsup><msubsup><mi>p</mi><mn>0</mn><mrow><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>k</mi></msub></mrow></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><msub><mi>n</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mfrac><mrow><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi></mrow><mi>N</mi></mfrac></mrow></msup><msup><mo stretchy="false" form="postfix">)</mo><msub><mi>n</mi><mi>k</mi></msub></msup><msup><mi>e</mi><mrow><mi>−</mi><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">
+p  n_{k}  =  \binom{N}{n_k} p_{&gt;}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k}rV}{N}})^{n_{k}} e^{-d_{k}rV(N - n_{k})}
 </annotation></semantics></math></p>
 <p>where the MLE density can be found form solving the following eqation
 for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math></p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>∑</mo><mi>k</mi></munder><mfrac><mrow><msub><mi>d</mi><mi>k</mi></msub><msub><mi>n</mi><mi>k</mi></msub></mrow><mrow><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>r</mi><msub><mi>d</mi><mi>k</mi></msub><mi>V</mi><mi>/</mi><mi>N</mi></mrow></msup><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><munder><mo>∑</mo><mi>k</mi></munder><msub><mi>d</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">
-\underset{k}{\sum} \frac{d_{k} n_{k}}{N(1 - e^{- r d_{k} V / N})} = \underset{k}{\sum} d_{k}
+\sum_k \frac{d_{k} n_{k}}{N(1 - e^{-rd_{k} V / N})} = \sum_k d_{k}
 </annotation></semantics></math></p>
 <p>When using this estimator in practice we must choose a value for the
 Estimated Maximum Colony Number
