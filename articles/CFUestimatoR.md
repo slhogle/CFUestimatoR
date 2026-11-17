@@ -5,24 +5,125 @@
 library(CFUestimatoR)
 ```
 
-## Overview
+## Introduction
 
-`CFUestimatoR` estimates colony forming units (CFU) from colony counts
-across a dilution series, using the maximum likelihood estimators from
-Martini et al. (2024). Please cite this paper if you use `CFUestimatoR`.
+`CFUestimatoR` estimates colony forming units (CFU) from agar plate
+colony counts, using the maximum likelihood estimators from Martini et
+al. (2024). Please cite this paper if you use `CFUestimatoR`.
 
 Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood
 estimators for colony-forming units. *Microbiology Spectrum*
 12(9):e03946-23. <https://doi.org/10.1128/spectrum.03946-23>
 
-`CFUestimatoR` offers two estimators:
+## Overview
 
-- `"mle"` (default): a maximum likelihood estimator that accounts for
-  saturation of a spot or plate at roughly `N` countable colonies.
-- `"poisson"`: a Poisson estimator that pools all observations with
-  counts below the cutoff `N`.
+The goal of `CFUestimatoR` is to accurately and precisely estimate the
+density of CFUs from plate counts while accounting for different sources
+of error (sample fluctuation, colony crowding, pipetting) during the
+sampling process, without discarding or losing valuable data.
 
-## A single dilution series
+`CFUestimatoR` offers two estimators: 1) A Poisson estimator with a
+user-set crowding cutoff. Note: this function can alos compute the
+“naive” Poisson estimator by setting the thresholding value $`M`$ to
+`Inf` and 2) a maximum likelihood estimator (default) based on the [most
+probable number](https://en.wikipedia.org/wiki/Most_probable_number)
+approach that explicitely models the process of crowding.
+
+### Poisson
+
+The Poisson model is arguably the most common model for calculating
+CFUs. Poisson assumes the number of colonies on a plate are Poison
+distributed with variation from sampling and that the mean colony count
+is equal to the variance. The most likely estimator under this model is
+just the ratio of the total number of colonies counted across all plates
+divided by the total amount of liquid plated.
+
+\$\$ r\_{\text{mle}} = \frac{\underset{k}{\sum} n\_{k}}{V
+\underset{k}{\sum} d\_{k}} = \frac{\underset{k}{\sum}
+n\_{k}}{\underset{k}{\sum} V\_{k}} , \sigma =
+\frac{r\_{\text{mle}\\\text{nbsp};}}{\\sqrt{\underset{k}{\sum} n\_{k}}}
+\$\$
+
+One weakness with this approach is that it cannot account for the event
+where two individual cells land on a small enough area that they grow
+together and are only countable as a single colony. The paper refers to
+this process as “crowding.”
+
+The Poisson model can control for crowding by incorporating a
+user-defined thresholding value $`M`$, below which it is assumed
+crowding is negligable and does not need to be modeled. This results in
+the following estimator.
+
+\$\$ r\_{\text{mle}\textrm{ }} = \frac{\underset{k}{\sum} I ⁡ n\_{k} \leq
+M ⁢ n\_{k}}{\underset{k}{\sum} I ⁡ n\_{k} \leq M ⁢ V\_{k}} , \sigma =
+\frac{r\_{m ⁢ l ⁢ e}}{\\sqrt{\underset{k}{\sum} I ⁡ n\_{k} \leq M ⁢ n\_{k}}}
+\$\$
+
+In practive the cutoff number $`N`$ should be set to a number less than
+when crowding starts to be important. This is equivalent to the TNTC
+(“too numerous to count”) value commonly used in microbiology. A good
+default value is $`N = 300`$
+
+### MLE
+
+The MLE estimator is slightly more complicated. Here a plate is divided
+into $`N \approx \frac{A_{\text{plate}}}{A_{\text{colo⁢ny}}}`$ regions,
+with each region the size of a full colony. We make the assumptions that
+if more than one cell lands on region $`N_{i}`$, the colonies that form
+from these cells will grow together and be counted as one colony. For
+each region, the number of cells landing in that region will be Poisson
+distributed with parameter $`\lambda = \frac{d_{k} r V}{N}`$.
+
+In the paper the authors show how this framing is equivalent to the
+[MPN](https://en.wikipedia.org/wiki/Most_probable_number) approach and
+requires three paramters 1) the total $`N_k`$ virtual MPN tubes tested,
+2) the dilution volume from the original sample $`V_k`$, and 3) the
+number $`n_k`$ of virtual tubes that are positive for growth.
+
+Basically, the probability of $`n_k`$ successes in region $`N_i`$ is
+describable from a binomial distribution where the probability of zero
+cells at region $`N_i`$ is $`p_{0} = e^{- d_{k} r V / N_i}`$ while the
+probability of $`\geq 1`$ landing in region $`N_i`$ is
+$`p_{\gt} = e^{- d_{k} r V / N_i}`$ resulting in the expression
+
+``` math
+p  n_{k}  =  \binom{N}{n_k} p_{>}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k} r V}{N}} )^{n_{k}} e^{- d_{k} r V  N - n_{k} }
+```
+
+where the MLE density can be found form solving the following eqation
+for $`r`$
+
+``` math
+\underset{k}{\sum} \frac{d_{k} n_{k}}{N(1 - e^{- r d_{k} V / N})} = \underset{k}{\sum} d_{k}
+```
+
+When using this estimator in practice we must choose a value for the
+Estimated Maximum Colony Number ($`N`$). A good starting estimate here
+is the ratio of the area of the plate to the average colony size, which
+for a standard 100 mm petri dish is $`N=5000`$
+
+## Using the estimators
+
+### Choosing N
+
+| Method | Meaning of `N` | Default |
+|----|----|----|
+| `"mle"` | Estimated Maximum Colony Number. (I.e., N perfectly packed colonies fit on a plate) | 5000 |
+| `"poisson"` | Counts at or above `N` are excluded | 300 |
+
+- The cutoff number in the Poisson approach should be a number less than
+  when crowding starts to be important on the plate.
+- For `"mle"`, a good starting estimate is the ratio of the area of the
+  plate to the average colony size. Any count above `N` gives an
+  estimate of `Inf`.
+
+*Note:* sometimes you may use a drop-spotting approach (e.g., [Miles and
+Misra](https://en.wikipedia.org/wiki/Miles_and_Misra_method)) if you
+have miniaturized your assay. For example if you’ve plated a 2 μl spot
+then a value of 50 is a good choice. In general, the drop spotting
+approach will usually produce noisier data.
+
+### One sample at a time
 
 The estimators work directly on vectors of counts and dilutions. Here
 are three replicates at each of three dilutions. Setting `V = 1` returns
@@ -66,28 +167,7 @@ crowded plates are undercounted. The maximum likelihood estimator uses
 all the data and models the saturation, so it needs no cutoff but it
 does need a sensible `N`.
 
-### Choosing N
-
-`N` means different things for the two different estimators.
-
-| Method      | Meaning of `N`                      | Default |
-|-------------|-------------------------------------|---------|
-| `"mle"`     | Maximum countable colonies          | 5000    |
-| `"poisson"` | Counts at or above `N` are excluded | 300     |
-
-- The cutoff number in the Poisson approach should be a number less than
-  when crowding starts to be important on the plate.
-- For `"mle"`, a good starting estimate is the ratio of the area of the
-  plate to the average colony size. Any count above `N` gives an
-  estimate of `Inf`.
-
-*Note:* sometimes you may use a drop-spotting approach (e.g., [Miles and
-Misra](https://en.wikipedia.org/wiki/Miles_and_Misra_method)) if you
-have miniaturized your assay. For example if you’ve plated a 2 μl spot
-then a value of 50 is a good choice. In general, the drop spotting
-approach will usually produce noisier data.
-
-## Many samples at once
+### Many samples all together
 
 [`estimate_cfu()`](https://slhogle.github.io/CFUestimatoR/reference/estimate_cfu.md)
 applies one estimator to every group in a data frame. The bundled
