@@ -6,7 +6,6 @@ Martini KM, Boddu SS, Nemenman I, Vega NM. 2024. Maximum likelihood estimators f
 
 Please make sure to cite this paper if you use `CFUestimatoR`!
 
-
 ## Installation
 You can install the development version from GitHub with:
 
