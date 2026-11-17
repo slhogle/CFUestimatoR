@@ -24,7 +24,7 @@ sampling process, without discarding or losing valuable data.
 
 `CFUestimatoR` offers two estimators: 1) A Poisson estimator with a
 user-set crowding cutoff. Note: this function can alos compute the
-“naive” Poisson estimator by setting the thresholding value $`M`$ to
+“naive” Poisson estimator by setting the thresholding value \\M\\ to
 `Inf` and 2) a maximum likelihood estimator (default) based on the [most
 probable number](https://en.wikipedia.org/wiki/Most_probable_number)
 approach that explicitely models the process of crowding.
@@ -38,9 +38,9 @@ is equal to the variance. The most likely estimator under this model is
 just the ratio of the total number of colonies counted across all plates
 divided by the total amount of liquid plated.
 
-\$\$ r\_{\text{mle}} = \frac{{\sum}\_k n\_{k}}{V \sum_k d\_{k}} =
+\\ r\_{\text{mle}} = \frac{{\sum}\_k n\_{k}}{V \sum_k d\_{k}} =
 \frac{\sum_k n\_{k}}{\sum_k V\_{k}}, \space \sigma =
-\frac{r\_{\text{mle}}}{\sqrt{\sum_k n\_{k}}} \$\$
+\frac{r\_{\text{mle}}}{\sqrt{\sum_k n\_{k}}} \\
 
 One weakness with this approach is that it cannot account for the event
 where two individual cells land on a small enough area that they grow
@@ -48,56 +48,55 @@ together and are only countable as a single colony. The paper refers to
 this process as “crowding.”
 
 The Poisson model can control for crowding by incorporating a
-user-defined thresholding value $`M`$, below which it is assumed
+user-defined thresholding value \\M\\, below which it is assumed
 crowding is negligable and does not need to be modeled. This results in
 the following estimator.
 
-\$\$ r\_{\text{mle}} = \frac{\sum_k I(n\_{k} \leq M) n\_{k}}{\sum_k
+\\ r\_{\text{mle}} = \frac{\sum_k I(n\_{k} \leq M) n\_{k}}{\sum_k
 I(n\_{k} \leq M) V\_{k}}, \space \sigma =
-\frac{r\_{\text{mle}}}{\sqrt{\sum_k I (n\_{k} \leq M) n\_{k}}} \$\$
+\frac{r\_{\text{mle}}}{\sqrt{\sum_k I (n\_{k} \leq M) n\_{k}}} \\
 
-In practive the cutoff number $`N`$ should be set to a number less than
+In practive the cutoff number \\N\\ should be set to a number less than
 when crowding starts to be important. This is equivalent to the TNTC
 (“too numerous to count”) value commonly used in microbiology. A good
-default value is $`N = 300`$
+default value is \\N = 300\\
 
 ### MLE
 
 The MLE estimator is slightly more complicated. Here a plate is divided
-into $`N \approx \frac{A_{\text{plate}}}{A_{\text{colo⁢ny}}}`$ regions,
+into \\N \approx \frac{A\_{\text{plate}}}{A\_{\text{colo⁢ny}}}\\ regions,
 with each region the size of a full colony. We make the assumptions that
-if more than one cell lands on region $`N_{i}`$, the colonies that form
+if more than one cell lands on region \\N\_{i}\\, the colonies that form
 from these cells will grow together and be counted as one colony. For
 each region, the number of cells landing in that region will be Poisson
-distributed with parameter $`\lambda = \frac{d_{k} r V}{N}`$.
+distributed with parameter \\\lambda = \frac{d\_{k} r V}{N}\\.
 
 In the paper the authors show how this framing is equivalent to the
 [MPN](https://en.wikipedia.org/wiki/Most_probable_number) approach and
-requires three paramters 1) the total $`N_k`$ virtual MPN tubes tested,
-2) the dilution volume from the original sample $`V_k`$, and 3) the
-number $`n_k`$ of virtual tubes that are positive for growth.
+requires three paramters 1) the total \\N_k\\ virtual MPN tubes tested,
+2) the dilution volume from the original sample \\V_k\\, and 3) the
+number \\n_k\\ of virtual tubes that are positive for growth.
 
-Basically, the probability of $`n_k`$ successes in region $`N_i`$ is
+Basically, the probability of \\n_k\\ successes in region \\N_i\\ is
 describable from a binomial distribution where the probability of zero
-cells at region $`N_i`$ is $`p_{0} = e^{- d_{k} r V / N_i}`$ while the
-probability of $`\geq 1`$ landing in region $`N_i`$ is
-$`p_{\gt} = e^{- d_{k} r V / N_i}`$ resulting in the expression
+cells at region \\N_i\\ is \\p\_{0} = e^{- d\_{k} r V / N_i}\\ while the
+probability of \\\geq 1\\ landing in region \\N_i\\ is \\p\_{\gt} = e^{-
+d\_{k} r V / N_i}\\ resulting in the expression
 
-``` math
-p  n_{k}  =  \binom{N}{n_k} p_{>}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k}rV}{N}})^{n_{k}} e^{-d_{k}rV(N - n_{k})}
-```
+\\ p n\_{k} = \binom{N}{n_k} p\_{\>}^{n\_{k}} p\_{0}^{N - n\_{k}} =
+\binom{N}{n_k} ( 1 - e^{- \frac{d\_{k}rV}{N}})^{n\_{k}} e^{-d\_{k}rV(N -
+n\_{k})} \\
 
 where the MLE density can be found form solving the following eqation
-for $`r`$
+for \\r\\
 
-``` math
-\sum_k \frac{d_{k} n_{k}}{N(1 - e^{-rd_{k} V / N})} = \sum_k d_{k}
-```
+\\ \sum_k \frac{d\_{k} n\_{k}}{N(1 - e^{-rd\_{k} V / N})} = \sum_k
+d\_{k} \\
 
 When using this estimator in practice we must choose a value for the
-Estimated Maximum Colony Number ($`N`$). A good starting estimate here
+Estimated Maximum Colony Number (\\N\\). A good starting estimate here
 is the ratio of the area of the plate to the average colony size, which
-for a standard 100 mm petri dish is $`N=5000`$
+for a standard 100 mm petri dish is \\N=5000\\
 
 ## Using the estimators
 

@@ -5,7 +5,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting started with CFUestimatoR • CFUestimatoR</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -84,9 +90,8 @@ valuable data.</p>
 <p><code>CFUestimatoR</code> offers two estimators: 1) A Poisson
 estimator with a user-set crowding cutoff. Note: this function can alos
 compute the “naive” Poisson estimator by setting the thresholding value
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
-to <code>Inf</code> and 2) a maximum likelihood estimator (default)
-based on the <a href="https://en.wikipedia.org/wiki/Most_probable_number" class="external-link">most probable
+<span class="math inline">\(M\)</span> to <code>Inf</code> and 2) a
+maximum likelihood estimator (default) based on the <a href="https://en.wikipedia.org/wiki/Most_probable_number" class="external-link">most probable
 number</a> approach that explicitely models the process of crowding.</p>
 <div class="section level3">
 <h3 id="poisson">Poisson<a class="anchor" aria-label="anchor" href="#poisson"></a>
@@ -97,86 +102,64 @@ distributed with variation from sampling and that the mean colony count
 is equal to the variance. The most likely estimator under this model is
 just the ratio of the total number of colonies counted across all plates
 divided by the total amount of liquid plated.</p>
-<p><span class="math display">$$
+<p><span class="math display">\[
 r_{\text{mle}} = \frac{{\sum}_k n_{k}}{V \sum_k d_{k}} = \frac{\sum_k
 n_{k}}{\sum_k V_{k}}, \space \sigma = \frac{r_{\text{mle}}}{\sqrt{\sum_k
 n_{k}}}
-$$</span></p>
+\]</span></p>
 <p>One weakness with this approach is that it cannot account for the
 event where two individual cells land on a small enough area that they
 grow together and are only countable as a single colony. The paper
 refers to this process as “crowding.”</p>
 <p>The Poisson model can control for crowding by incorporating a
-user-defined thresholding value
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>,
+user-defined thresholding value <span class="math inline">\(M\)</span>,
 below which it is assumed crowding is negligable and does not need to be
 modeled. This results in the following estimator.</p>
-<p><span class="math display">$$
+<p><span class="math display">\[
 r_{\text{mle}} = \frac{\sum_k I(n_{k} \leq M) n_{k}}{\sum_k I(n_{k} \leq
 M) V_{k}}, \space \sigma = \frac{r_{\text{mle}}}{\sqrt{\sum_k I (n_{k}
 \leq M) n_{k}}}
-$$</span></p>
-<p>In practive the cutoff number
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
+\]</span></p>
+<p>In practive the cutoff number <span class="math inline">\(N\)</span>
 should be set to a number less than when crowding starts to be
 important. This is equivalent to the TNTC (“too numerous to count”)
-value commonly used in microbiology. A good default value is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>300</mn></mrow><annotation encoding="application/x-tex">N = 300</annotation></semantics></math></p>
+value commonly used in microbiology. A good default value is <span class="math inline">\(N = 300\)</span></p>
 </div>
 <div class="section level3">
 <h3 id="mle">MLE<a class="anchor" aria-label="anchor" href="#mle"></a>
 </h3>
 <p>The MLE estimator is slightly more complicated. Here a plate is
-divided into
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>≈</mo><mfrac><msub><mi>A</mi><mtext mathvariant="normal">plate</mtext></msub><msub><mi>A</mi><mtext mathvariant="normal">colo⁢ny</mtext></msub></mfrac></mrow><annotation encoding="application/x-tex">N \approx \frac{A_{\text{plate}}}{A_{\text{colo⁢ny}}}</annotation></semantics></math>
-regions, with each region the size of a full colony. We make the
-assumptions that if more than one cell lands on region
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>i</mi></msub><annotation encoding="application/x-tex">N_{i}</annotation></semantics></math>,
-the colonies that form from these cells will grow together and be
-counted as one colony. For each region, the number of cells landing in
-that region will be Poisson distributed with parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mfrac><mrow><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi></mrow><mi>N</mi></mfrac></mrow><annotation encoding="application/x-tex">\lambda = \frac{d_{k} r V}{N}</annotation></semantics></math>.</p>
+divided into <span class="math inline">\(N \approx
+\frac{A_{\text{plate}}}{A_{\text{colo⁢ny}}}\)</span> regions, with each
+region the size of a full colony. We make the assumptions that if more
+than one cell lands on region <span class="math inline">\(N_{i}\)</span>, the colonies that form from these
+cells will grow together and be counted as one colony. For each region,
+the number of cells landing in that region will be Poisson distributed
+with parameter <span class="math inline">\(\lambda = \frac{d_{k} r
+V}{N}\)</span>.</p>
 <p>In the paper the authors show how this framing is equivalent to the
 <a href="https://en.wikipedia.org/wiki/Most_probable_number" class="external-link">MPN</a>
-approach and requires three paramters 1) the total
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>k</mi></msub><annotation encoding="application/x-tex">N_k</annotation></semantics></math>
-virtual MPN tubes tested, 2) the dilution volume from the original
-sample
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mi>k</mi></msub><annotation encoding="application/x-tex">V_k</annotation></semantics></math>,
-and 3) the number
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>k</mi></msub><annotation encoding="application/x-tex">n_k</annotation></semantics></math>
-of virtual tubes that are positive for growth.</p>
-<p>Basically, the probability of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>n</mi><mi>k</mi></msub><annotation encoding="application/x-tex">n_k</annotation></semantics></math>
-successes in region
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>i</mi></msub><annotation encoding="application/x-tex">N_i</annotation></semantics></math>
-is describable from a binomial distribution where the probability of
-zero cells at region
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>i</mi></msub><annotation encoding="application/x-tex">N_i</annotation></semantics></math>
-is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mn>0</mn></msub><mo>=</mo><msup><mi>e</mi><mrow><mi>−</mi><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi><mi>/</mi><msub><mi>N</mi><mi>i</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">p_{0} = e^{- d_{k} r V / N_i}</annotation></semantics></math>
-while the probability of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\geq 1</annotation></semantics></math>
-landing in region
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>i</mi></msub><annotation encoding="application/x-tex">N_i</annotation></semantics></math>
-is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mo>&gt;</mo></msub><mo>=</mo><msup><mi>e</mi><mrow><mi>−</mi><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi><mi>/</mi><msub><mi>N</mi><mi>i</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">p_{\gt} = e^{- d_{k} r V / N_i}</annotation></semantics></math>
-resulting in the expression</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><msub><mi>n</mi><mi>k</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><msub><mi>n</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><msubsup><mi>p</mi><mo>&gt;</mo><msub><mi>n</mi><mi>k</mi></msub></msubsup><msubsup><mi>p</mi><mn>0</mn><mrow><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>k</mi></msub></mrow></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac linethickness="0"><mi>N</mi><msub><mi>n</mi><mi>k</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mfrac><mrow><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi></mrow><mi>N</mi></mfrac></mrow></msup><msup><mo stretchy="false" form="postfix">)</mo><msub><mi>n</mi><mi>k</mi></msub></msup><msup><mi>e</mi><mrow><mi>−</mi><msub><mi>d</mi><mi>k</mi></msub><mi>r</mi><mi>V</mi><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">
-p  n_{k}  =  \binom{N}{n_k} p_{&gt;}^{n_{k}} p_{0}^{N - n_{k}} =  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k}rV}{N}})^{n_{k}} e^{-d_{k}rV(N - n_{k})}
-</annotation></semantics></math></p>
+approach and requires three paramters 1) the total <span class="math inline">\(N_k\)</span> virtual MPN tubes tested, 2) the
+dilution volume from the original sample <span class="math inline">\(V_k\)</span>, and 3) the number <span class="math inline">\(n_k\)</span> of virtual tubes that are positive
+for growth.</p>
+<p>Basically, the probability of <span class="math inline">\(n_k\)</span> successes in region <span class="math inline">\(N_i\)</span> is describable from a binomial
+distribution where the probability of zero cells at region <span class="math inline">\(N_i\)</span> is <span class="math inline">\(p_{0}
+= e^{- d_{k} r V / N_i}\)</span> while the probability of <span class="math inline">\(\geq 1\)</span> landing in region <span class="math inline">\(N_i\)</span> is <span class="math inline">\(p_{\gt} = e^{- d_{k} r V / N_i}\)</span> resulting
+in the expression</p>
+<p><span class="math display">\[
+p  n_{k}  =  \binom{N}{n_k} p_{&gt;}^{n_{k}} p_{0}^{N - n_{k}}
+=  \binom{N}{n_k} ( 1 - e^{- \frac{d_{k}rV}{N}})^{n_{k}} e^{-d_{k}rV(N -
+n_{k})}
+\]</span></p>
 <p>where the MLE density can be found form solving the following eqation
-for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>∑</mo><mi>k</mi></munder><mfrac><mrow><msub><mi>d</mi><mi>k</mi></msub><msub><mi>n</mi><mi>k</mi></msub></mrow><mrow><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>r</mi><msub><mi>d</mi><mi>k</mi></msub><mi>V</mi><mi>/</mi><mi>N</mi></mrow></msup><mo stretchy="false" form="postfix">)</mo></mrow></mfrac><mo>=</mo><munder><mo>∑</mo><mi>k</mi></munder><msub><mi>d</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">
+for <span class="math inline">\(r\)</span></p>
+<p><span class="math display">\[
 \sum_k \frac{d_{k} n_{k}}{N(1 - e^{-rd_{k} V / N})} = \sum_k d_{k}
-</annotation></semantics></math></p>
+\]</span></p>
 <p>When using this estimator in practice we must choose a value for the
-Estimated Maximum Colony Number
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>).
-A good starting estimate here is the ratio of the area of the plate to
-the average colony size, which for a standard 100 mm petri dish is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>5000</mn></mrow><annotation encoding="application/x-tex">N=5000</annotation></semantics></math></p>
+Estimated Maximum Colony Number (<span class="math inline">\(N\)</span>). A good starting estimate here is the
+ratio of the area of the plate to the average colony size, which for a
+standard 100 mm petri dish is <span class="math inline">\(N=5000\)</span></p>
 </div>
 </div>
 <div class="section level2">
